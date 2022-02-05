@@ -31,6 +31,7 @@ namespace DemoApp.Web
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
+                cfg.Stores.MaxLengthForKeys = 85;
                 cfg.User.RequireUniqueEmail = true; /* Registrar un solo email con la cuenta*/
                 cfg.Password.RequireDigit = false; /* El password solo requiere digitos*/
                 cfg.Password.RequiredLength = 6; /*Longitud del password*/
@@ -43,8 +44,8 @@ namespace DemoApp.Web
 
             services.AddDbContext<DataContext>(cfg =>
             {
-                //cfg.UseMySql(this.Configuration.GetConnectionString("MySQLConnection"));
-                cfg.UseSqlServer(this.Configuration.GetConnectionString("SQLServerConnection"));
+                cfg.UseMySql(this.Configuration.GetConnectionString("MySQLConnection"), Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.27-mysql"));
+                //cfg.UseSqlServer(this.Configuration.GetConnectionString("SQLServerConnection"));
             });
 
             services.AddScoped<IOperations<Product>, ManageOperations<Product>>();
@@ -59,8 +60,6 @@ namespace DemoApp.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMvc().AddMvcOptions(options => options.EnableEndpointRouting = false);
         }
 
